@@ -31,4 +31,22 @@ public class ProjectRepository {
 
         return data;
     }
+
+    public LiveData<Project> getProjectDetail(String userId, String repoName){
+        final MutableLiveData<Project> data = new MutableLiveData<>();
+
+        gitHubService.getProjectDetails(userId, repoName).enqueue(new Callback<Project>() {
+            @Override
+            public void onResponse(Call<Project> call, Response<Project> response) {
+                data.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Project> call, Throwable t) {
+                //later on
+            }
+        });
+
+        return data;
+    }
 }
