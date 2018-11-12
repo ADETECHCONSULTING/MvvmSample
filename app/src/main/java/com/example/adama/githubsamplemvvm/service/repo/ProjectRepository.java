@@ -10,9 +10,31 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProjectRepository {
     private IGitHubService gitHubService;
+    private static ProjectRepository projectRepository;
+
+
+    private ProjectRepository(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(IGitHubService.HTTPS_API_GITHUB_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        gitHubService = retrofit.create(IGitHubService.class);
+
+    }
+
+    public static ProjectRepository getInstance(){
+        if(projectRepository == null)
+            projectRepository = new ProjectRepository();
+
+        return projectRepository;
+    }
+
 
     public LiveData<List<Project>> getProjectList(String userId){
         final MutableLiveData<List<Project>> data = new MutableLiveData<>();
@@ -31,6 +53,7 @@ public class ProjectRepository {
 
         return data;
     }
+
 
     public LiveData<Project> getProjectDetail(String userId, String repoName){
         final MutableLiveData<Project> data = new MutableLiveData<>();
